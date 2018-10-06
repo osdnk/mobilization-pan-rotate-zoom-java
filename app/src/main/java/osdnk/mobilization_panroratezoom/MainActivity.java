@@ -9,13 +9,12 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toolbar;
 
 
 public class MainActivity extends AppCompatActivity {
 
-  ImageView im_move_zoom_rotate;
-  float scalediff;
+  ImageView mImage;
+  float scaleDiff;
   private static final int NONE = 0;
   private static final int DRAG = 1;
   private static final int ZOOM = 2;
@@ -38,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
     layoutParams.topMargin = 50;
     layoutParams.bottomMargin = -250;
     layoutParams.rightMargin = -250;
-    im_move_zoom_rotate.setLayoutParams(layoutParams);
+    mImage.setLayoutParams(layoutParams);
 
-    im_move_zoom_rotate.setOnTouchListener(new View.OnTouchListener() {
+    mImage.setOnTouchListener(new View.OnTouchListener() {
 
       RelativeLayout.LayoutParams parms;
       int startwidth;
@@ -51,11 +50,9 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
         final ImageView view = (ImageView) v;
-
         ((BitmapDrawable) view.getDrawable()).setAntiAlias(true);
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
           case MotionEvent.ACTION_DOWN:
-
             parms = (RelativeLayout.LayoutParams) view.getLayoutParams();
             startwidth = parms.width;
             startheight = parms.height;
@@ -69,75 +66,55 @@ public class MainActivity extends AppCompatActivity {
             if (oldDist > 10f) {
               mode = ZOOM;
             }
-
             d = rotation(event);
-
             break;
-          case MotionEvent.ACTION_UP:
 
+          case MotionEvent.ACTION_UP:
             break;
 
           case MotionEvent.ACTION_POINTER_UP:
             mode = NONE;
-
             break;
+
           case MotionEvent.ACTION_MOVE:
             if (mode == DRAG) {
-
               x = event.getRawX();
               y = event.getRawY();
-
               parms.leftMargin = (int) (x - dx);
               parms.topMargin = (int) (y - dy);
-
               parms.rightMargin = 0;
               parms.bottomMargin = 0;
               parms.rightMargin = parms.leftMargin + (5 * parms.width);
               parms.bottomMargin = parms.topMargin + (10 * parms.height);
-
               view.setLayoutParams(parms);
-
             } else if (mode == ZOOM) {
-
               if (event.getPointerCount() == 2) {
-
                 newRot = rotation(event);
-                float r = newRot - d;
-                angle = r;
-
+                angle = newRot - d;
                 x = event.getRawX();
                 y = event.getRawY();
-
                 float newDist = spacing(event);
                 if (newDist > 10f) {
                   float scale = newDist / oldDist * view.getScaleX();
                   if (scale > 0.6) {
-                    scalediff = scale;
+                    scaleDiff = scale;
                     view.setScaleX(scale);
                     view.setScaleY(scale);
-
                   }
                 }
 
                 view.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
-
                 x = event.getRawX();
                 y = event.getRawY();
-
-                parms.leftMargin = (int) ((x - dx) + scalediff);
-                parms.topMargin = (int) ((y - dy) + scalediff);
-
+                parms.leftMargin = (int) ((x - dx) + scaleDiff);
+                parms.topMargin = (int) ((y - dy) + scaleDiff);
                 parms.rightMargin = 0;
                 parms.bottomMargin = 0;
                 parms.rightMargin = parms.leftMargin + (5 * parms.width);
                 parms.bottomMargin = parms.topMargin + (10 * parms.height);
-
                 view.setLayoutParams(parms);
-
-
               }
             }
-            break;
         }
 
         return true;
@@ -147,9 +124,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void init() {
-
-    im_move_zoom_rotate = findViewById(R.id.im_move_zoom_rotate);
-
+    mImage = findViewById(R.id.im_move_zoom_rotate);
   }
 
   private float spacing(MotionEvent event) {
