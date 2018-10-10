@@ -67,9 +67,12 @@ public class MainActivity extends AppCompatActivity {
             d = rotation(event);
             break;
 
-          case MotionEvent.ACTION_UP: break;
+          case MotionEvent.ACTION_UP:
+            break;
 
-          case MotionEvent.ACTION_POINTER_UP: mode = NONE; break;
+          case MotionEvent.ACTION_POINTER_UP:
+            mode = NONE;
+            break;
 
           case MotionEvent.ACTION_MOVE:
             if (mode == DRAG) {
