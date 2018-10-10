@@ -28,10 +28,7 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
     init();
-
-
     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(250, 250);
     layoutParams.leftMargin = 50;
     layoutParams.topMargin = 50;
