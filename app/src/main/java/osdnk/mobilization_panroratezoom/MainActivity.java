@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     mImage.setOnTouchListener(new View.OnTouchListener() {
 
-      RelativeLayout.LayoutParams parms;
-      int startwidth;
-      int startheight;
+      RelativeLayout.LayoutParams params;
+      int startWidth;
+      int startHeight;
       float dx = 0, dy = 0, x = 0, y = 0;
       float angle = 0;
 
@@ -50,19 +50,17 @@ public class MainActivity extends AppCompatActivity {
         ((BitmapDrawable) view.getDrawable()).setAntiAlias(true);
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
           case MotionEvent.ACTION_DOWN:
-            parms = (RelativeLayout.LayoutParams) view.getLayoutParams();
-            startwidth = parms.width;
-            startheight = parms.height;
-            dx = event.getRawX() - parms.leftMargin;
-            dy = event.getRawY() - parms.topMargin;
+            params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+            startWidth = params.width;
+            startHeight = params.height;
+            dx = event.getRawX() - params.leftMargin;
+            dy = event.getRawY() - params.topMargin;
             mode = DRAG;
             break;
 
           case MotionEvent.ACTION_POINTER_DOWN:
             oldDist = spacing(event);
-            if (oldDist > 10f) {
-              mode = ZOOM;
-            }
+            if (oldDist > 10f) { mode = ZOOM; }
             d = rotation(event);
             break;
 
@@ -77,13 +75,11 @@ public class MainActivity extends AppCompatActivity {
             if (mode == DRAG) {
               x = event.getRawX();
               y = event.getRawY();
-              parms.leftMargin = (int) (x - dx);
-              parms.topMargin = (int) (y - dy);
-              parms.rightMargin = 0;
-              parms.bottomMargin = 0;
-              parms.rightMargin = parms.leftMargin + (5 * parms.width);
-              parms.bottomMargin = parms.topMargin + (10 * parms.height);
-              view.setLayoutParams(parms);
+              params.leftMargin = (int) (x - dx);
+              params.topMargin = (int) (y - dy);
+              params.rightMargin = params.leftMargin + (5 * params.width);
+              params.bottomMargin = params.topMargin + (10 * params.height);
+              view.setLayoutParams(params);
             } else if (mode == ZOOM) {
               if (event.getPointerCount() == 2) {
                 newRot = rotation(event);
@@ -99,23 +95,18 @@ public class MainActivity extends AppCompatActivity {
                     view.setScaleY(scale);
                   }
                 }
-
                 view.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
                 x = event.getRawX();
                 y = event.getRawY();
-                parms.leftMargin = (int) ((x - dx) + scaleDiff);
-                parms.topMargin = (int) ((y - dy) + scaleDiff);
-                parms.rightMargin = 0;
-                parms.bottomMargin = 0;
-                parms.rightMargin = parms.leftMargin + (5 * parms.width);
-                parms.bottomMargin = parms.topMargin + (10 * parms.height);
-                view.setLayoutParams(parms);
+                params.leftMargin = (int) ((x - dx) + scaleDiff);
+                params.topMargin = (int) ((y - dy) + scaleDiff);
+                params.rightMargin = params.leftMargin + (5 * params.width);
+                params.bottomMargin = params.topMargin + (10 * params.height);
+                view.setLayoutParams(params);
               }
             }
         }
-
         return true;
-
       }
     });
   }
