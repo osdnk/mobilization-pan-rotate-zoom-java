@@ -49,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
         final ImageView view = (ImageView) v;
         ((BitmapDrawable) view.getDrawable()).setAntiAlias(true);
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
+          case MotionEvent.ACTION_UP:
+            break;
+          case MotionEvent.ACTION_POINTER_UP:
+            mode = NONE;
+            break;
+
           case MotionEvent.ACTION_DOWN:
             params = (RelativeLayout.LayoutParams) view.getLayoutParams();
             startWidth = params.width;
@@ -64,49 +70,38 @@ public class MainActivity extends AppCompatActivity {
             d = rotation(event);
             break;
 
-          case MotionEvent.ACTION_UP:
-            break;
-
-          case MotionEvent.ACTION_POINTER_UP:
-            mode = NONE;
-            break;
-
           case MotionEvent.ACTION_MOVE:
             if (mode == DRAG) {
               x = event.getRawX();
               y = event.getRawY();
-              params.leftMargin = (int) (x - dx);
-              params.topMargin = (int) (y - dy);
-              params.rightMargin = params.leftMargin + (5 * params.width);
-              params.bottomMargin = params.topMargin + (10 * params.height);
-              view.setLayoutParams(params);
-            } else if (mode == ZOOM) {
-              if (event.getPointerCount() == 2) {
-                newRot = rotation(event);
-                angle = newRot - d;
-                x = event.getRawX();
-                y = event.getRawY();
-                float newDist = spacing(event);
-                if (newDist > 10f) {
-                  float scale = newDist / oldDist * view.getScaleX();
-                  if (scale > 0.6) {
-                    scaleDiff = scale;
-                    view.setScaleX(scale);
-                    view.setScaleY(scale);
-                  }
+            } else if (mode == ZOOM && event.getPointerCount() == 2) {
+              newRot = rotation(event);
+              angle = newRot - d;
+              x = event.getRawX();
+              y = event.getRawY();
+              float newDist = spacing(event);
+              if (newDist > 10f) {
+                float scale = newDist / oldDist * view.getScaleX();
+                if (scale > 0.6) {
+                  scaleDiff = scale;
+                  view.setScaleX(scale);
+                  view.setScaleY(scale);
                 }
-                view.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
-                x = event.getRawX();
-                y = event.getRawY();
-                params.leftMargin = (int) ((x - dx) + scaleDiff);
-                params.topMargin = (int) ((y - dy) + scaleDiff);
-                params.rightMargin = params.leftMargin + (5 * params.width);
-                params.bottomMargin = params.topMargin + (10 * params.height);
-                view.setLayoutParams(params);
               }
+              view.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
+              x = event.getRawX();
+              y = event.getRawY();
             }
+            apply(view);
         }
         return true;
+      }
+      private void apply (View view) {
+        params.leftMargin = (int) ((x - dx) + (mode == ZOOM ? scaleDiff : 0));
+        params.topMargin = (int) ((y - dy) + (mode == ZOOM ? scaleDiff : 0));
+        params.rightMargin = params.leftMargin + (5 * params.width);
+        params.bottomMargin = params.topMargin + (10 * params.height);
+        view.setLayoutParams(params);
       }
     });
   }
